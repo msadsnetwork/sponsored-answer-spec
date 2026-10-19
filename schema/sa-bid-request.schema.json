@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://msadsnetwork.com/spec/sponsored-answer/0.1/sa-bid-request.schema.json",
+  "title": "OpenRTB 2.6 BidRequest with MS Ads Sponsored Answer extension v0.1 (draft)",
+  "type": "object",
+  "required": ["id", "imp", "ext"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "at": {"enum": [1, 2]},
+    "tmax": {"type": "integer", "minimum": 50, "maximum": 2000},
+    "cur": {"type": "array", "items": {"type": "string", "pattern": "^[A-Z]{3}$"}},
+    "imp": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/imp"}},
+    "app": {"type": "object"},
+    "site": {"type": "object"},
+    "device": {"$ref": "#/$defs/device"},
+    "user": {"$ref": "#/$defs/user"},
+    "regs": {"type": "object"},
+    "source": {"type": "object"},
+    "ext": {
+      "type": "object",
+      "required": ["agent"],
+      "properties": {"agent": {"$ref": "#/$defs/agent"}}
+    }
+  },
+  "$defs": {
+    "imp": {
+      "type": "object",
+      "required": ["id", "ext"],
+      "properties": {
+        "id": {"type": "string"},
+        "bidfloor": {"type": "number", "minimum": 0},
+        "bidfloorcur": {"type": "string", "pattern": "^[A-Z]{3}$"},
+        "ext": {"type": "object", "required": ["sa"], "properties": {"sa": {"$ref": "#/$defs/sa_slot"}}}
+      }
+    },
+    "sa_slot": {
+      "type": "object",
+      "required": ["ver", "formats", "position", "max_answers"],
+      "additionalProperties": false,
+      "properties": {
+        "ver": {"const": "0.1"},
+        "formats": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["text", "card", "link"]}},
+        "position": {"enum": ["after_answer", "inline_suggestion", "followup_chip"], "description": "Where the host renders the sponsored answer. It is never mixed into the organic answer text."},
+        "max_answers": {"type": "integer", "minimum": 1, "maximum": 3},
+        "max_text_chars": {"type": "integer", "minimum": 40, "maximum": 600},
+        "pricing": {"type": "array", "items": {"enum": ["cpm", "cpc", "cpa"]}},
+        "lite": {"type": "boolean", "description": "Low-bandwidth host: no image, or an image of 30 KB or less."}
+      }
+    },
+    "agent": {
+      "type": "object",
+      "required": ["ver", "id", "type", "conversation", "consent", "disclosure"],
+      "additionalProperties": false,
+      "properties": {
+        "ver": {"const": "0.1"},
+        "id": {"type": "string", "pattern": "^[A-Za-z0-9_.:-]{3,64}$", "description": "Registered agent id (Agent Exchange bot id or placement key id, NOT the secret)."},
+        "type": {"enum": ["chatbot", "assistant", "voice_assistant", "search_agent", "task_agent", "shopping_agent"]},
+        "name": {"type": "string", "maxLength": 80},
+        "operator_domain": {"type": "string", "pattern": "^[a-z0-9.-]+\\.[a-z]{2,}$", "description": "Matches an app-ads.txt / ads.txt / agent.json entry."},
+        "model_family": {"type": "string", "maxLength": 40},
+        "conversation": {"$ref": "#/$defs/conversation"},
+        "consent": {"$ref": "#/$defs/consent"},
+        "disclosure": {"$ref": "#/$defs/disclosure_caps"},
+        "ivt": {"$ref": "#/$defs/ivt"},
+        "payout": {"$ref": "#/$defs/payout_hook"}
+      }
+    },
+    "conversation": {
+      "type": "object",
+      "required": ["intent", "topic", "lang"],
+      "additionalProperties": false,
+      "properties": {
+        "intent": {"enum": ["informational", "compare", "decide", "purchase", "book", "navigate", "support", "local_find"], "description": "decide/purchase/book = a 'decision moment'."},
+        "decision_stage": {"enum": ["explore", "consider", "decide", "act"]},
+        "summary": {"type": "string", "maxLength": 200, "description": "Short intent summary written by the agent. MUST NOT contain PII (names, phones, emails, exact addresses, IDs). Raw chat text is never sent."},
+        "topic": {
+          "type": "object",
+          "required": ["cattax", "cat"],
+          "properties": {
+            "cattax": {"type": "integer", "description": "OpenRTB/AdCOM cattax. 7 = IAB Content Taxonomy 3.0, 2 = IAB Content 2.0."},
+            "cat": {"type": "array", "minItems": 1, "maxItems": 5, "items": {"type": "string"}},
+            "keywords": {"type": "array", "maxItems": 10, "items": {"type": "string", "maxLength": 40}}
+          }
+        },
+        "lang": {
+          "type": "object",
+          "required": ["code"],
+          "additionalProperties": false,
+          "properties": {
+            "code": {"type": "string", "pattern": "^[a-z]{2,3}$", "description": "ISO 639-1/-3, e.g. ur, en, hi, ar."},
+            "script": {"type": "string", "pattern": "^[A-Z][a-z]{3}$", "description": "ISO 15924: Arab = Urdu script, Latn = Roman Urdu."},
+            "variant": {"enum": ["standard", "romanized", "code_mixed"]},
+            "mix": {"type": "array", "items": {"type": "string", "pattern": "^[a-z]{2,3}$"}, "description": "Other languages mixed in, e.g. [\"en\"] for Urdu-English."},
+            "reply_lang": {"type": "string", "description": "BCP-47 tag the sponsored answer should be written in, e.g. ur-Latn."}
+          }
+        },
+        "turn": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Turn context without PII: counts and categories only.",
+          "properties": {
+            "index": {"type": "integer", "minimum": 1},
+            "session_turns": {"type": "integer", "minimum": 1},
+            "prior_topics": {"type": "array", "maxItems": 5, "items": {"type": "string"}},
+            "user_asked_for_options": {"type": "boolean"},
+            "modality": {"enum": ["text", "voice"]}
+          }
+        },
+        "sensitive": {"type": "boolean", "description": "true = health/finance-distress/minors/politics etc. The exchange returns no bid."}
+      }
+    },
+    "consent": {
+      "type": "object",
+      "required": ["ads"],
+      "additionalProperties": false,
+      "properties": {
+        "ads": {"type": "boolean", "description": "The user is in an ad-supported tier and has not opted out."},
+        "personalization": {"type": "boolean"},
+        "age_gate": {"enum": ["adult_confirmed", "unknown", "minor"]},
+        "gpp": {"type": "string"},
+        "gpp_sid": {"type": "array", "items": {"type": "integer"}}
+      }
+    },
+    "disclosure_caps": {
+      "type": "object",
+      "required": ["label_supported"],
+      "properties": {
+        "label_supported": {"const": true},
+        "label_lang": {"type": "string"},
+        "separate_ui": {"type": "boolean", "description": "The host renders the sponsored answer visually separate from the organic answer."}
+      }
+    },
+    "ivt": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Hooks into MS Ads IVT filters D1-D6. Filled by the exchange (not trusted from the agent) before forwarding to buyers.",
+      "properties": {
+        "checked": {"type": "array", "items": {"enum": ["D1", "D2", "D3", "D4", "D5", "D6"]}},
+        "score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "reasons": {"type": "array", "items": {"type": "string", "pattern": "^D[1-6]\\.[a-z_]+$"}},
+        "token": {"type": "string", "description": "D5 signed session token (opaque)."},
+        "agent_verified": {"type": "boolean", "description": "Agent ownership verified (agent.json / app-ads.txt / in-app code)."}
+      }
+    },
+    "payout_hook": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "statement_url": {"type": "string", "format": "uri", "description": "payout.json (Idea 3) location for this agent operator; token-protected."},
+        "period": {"enum": ["daily", "weekly", "monthly"]}
+      }
+    },
+    "device": {
+      "type": "object",
+      "properties": {
+        "ip": false, "ipv6": false, "ifa": false,
+        "connectiontype": {"type": "integer"},
+        "geo": {"type": "object", "properties": {"country": {"type": "string"}, "lat": false, "lon": false}}
+      }
+    },
+    "user": {"type": "object", "properties": {"id": false, "buyeruid": false, "data": {"type": "array"}}}
+  }
+}

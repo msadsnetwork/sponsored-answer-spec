@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://msadsnetwork.com/spec/sponsored-answer/0.1/sa-bid-response.schema.json",
+  "title": "OpenRTB 2.6 BidResponse with Sponsored Answer payload v0.1 (draft)",
+  "type": "object",
+  "required": ["id", "seatbid"],
+  "properties": {
+    "id": {"type": "string"},
+    "cur": {"type": "string", "pattern": "^[A-Z]{3}$"},
+    "seatbid": {"type": "array", "items": {"type": "object", "required": ["bid"], "properties": {
+      "seat": {"type": "string"},
+      "bid": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/bid"}}
+    }}}
+  },
+  "$defs": {
+    "bid": {
+      "type": "object",
+      "required": ["id", "impid", "price", "adomain", "ext"],
+      "properties": {
+        "id": {"type": "string"}, "impid": {"type": "string"},
+        "price": {"type": "number", "exclusiveMinimum": 0},
+        "adomain": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "cat": {"type": "array", "items": {"type": "string"}},
+        "nurl": {"type": "string"}, "burl": {"type": "string"},
+        "ext": {"type": "object", "required": ["sa"], "properties": {"sa": {"$ref": "#/$defs/sa"}}}
+      }
+    },
+    "sa": {
+      "type": "object",
+      "required": ["ver", "format", "pricing", "disclosure", "answer"],
+      "additionalProperties": false,
+      "properties": {
+        "ver": {"const": "0.1"},
+        "offer_ref": {"type": "string", "pattern": "^axo_[a-z0-9]{24}$", "description": "Agent Exchange offer reference (used by /api/v1/agent-exchange/events)."},
+        "format": {"enum": ["text", "card", "link"]},
+        "pricing": {"enum": ["cpm", "cpc", "cpa"]},
+        "disclosure": {
+          "type": "object",
+          "required": ["label", "sponsor", "placement"],
+          "additionalProperties": false,
+          "properties": {
+            "label": {"enum": ["Sponsored", "Ad", "Sponsored (ishtehar)", "اشتہار", "Ishtehar", "Sponsorlu", "إعلان", "विज्ञापन"]},
+            "sponsor": {"type": "string", "minLength": 2, "maxLength": 60},
+            "placement": {"const": "before_content", "description": "The label is shown before or above the sponsored text, never only at the end."},
+            "why_url": {"type": "string", "description": "'Why am I seeing this' page."}
+          }
+        },
+        "answer": {
+          "type": "object",
+          "required": ["text", "lang"],
+          "additionalProperties": false,
+          "properties": {
+            "title": {"type": "string", "maxLength": 80},
+            "text": {"type": "string", "minLength": 10, "maxLength": 600},
+            "lang": {"type": "string"},
+            "cta": {"type": "string", "maxLength": 30},
+            "url": {"type": "string", "pattern": "^https://"},
+            "image": {"type": "object", "properties": {"url": {"type": "string", "pattern": "^https://"}, "bytes": {"type": "integer", "maximum": 30720}, "w": {"type": "integer"}, "h": {"type": "integer"}}},
+            "price_claim": {"type": "object", "properties": {"amount": {"type": "number"}, "currency": {"type": "string"}, "valid_until": {"type": "string", "format": "date-time"}}}
+          }
+        },
+        "events": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shown": {"type": "string"}, "clicked": {"type": "string"}, "accepted": {"type": "string"}
+          }
+        }
+      }
+    }
+  }
+}

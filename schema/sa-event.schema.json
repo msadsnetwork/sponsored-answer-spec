@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://msadsnetwork.com/spec/sponsored-answer/0.1/sa-event.schema.json",
+  "title": "Sponsored Answer event v0.1 (maps to POST /api/v1/agent-exchange/events)",
+  "type": "object",
+  "required": ["offer_ref", "event", "idempotency_key", "ts"],
+  "additionalProperties": false,
+  "properties": {
+    "offer_ref": {"type": "string", "pattern": "^axo_[a-z0-9]{24}$"},
+    "event": {"enum": ["shown", "clicked", "accepted"], "description": "Agent Exchange mapping: shown→impression, clicked→click, accepted→task (completed action)."},
+    "idempotency_key": {"type": "string", "minLength": 8, "maxLength": 128},
+    "ts": {"type": "string", "format": "date-time"},
+    "visible_ms": {"type": "integer", "minimum": 0, "description": "shown: how long the answer was on screen (D3 viewability, log-only)."},
+    "accepted_value": {"type": "object", "properties": {"amount": {"type": "number"}, "currency": {"type": "string"}}},
+    "d5_token": {"type": "string"}
+  }
+}
