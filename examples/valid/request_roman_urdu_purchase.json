@@ -1,0 +1,37 @@
+{
+  "id": "ax_req0000000000000000000001",
+  "at": 1,
+  "tmax": 400,
+  "cur": ["USD"],
+  "imp": [{
+    "id": "1",
+    "tagid": "msads_agentdemo01",
+    "bidfloor": 1.0,
+    "bidfloorcur": "USD",
+    "ext": {"sa": {"ver": "0.1", "formats": ["card", "text"], "position": "after_answer", "max_answers": 1, "max_text_chars": 280, "pricing": ["cpc", "cpa"], "lite": true}}
+  }],
+  "app": {"id": "bot-1", "bundle": "agent.1", "publisher": {"id": "1"}},
+  "device": {"connectiontype": 6, "geo": {"country": "PAK"}},
+  "regs": {"coppa": 0},
+  "source": {"tid": "ax_req0000000000000000000001", "schain": {"complete": 1, "ver": "1.0", "nodes": [{"asi": "msadsnetwork.com", "sid": "pub-1", "hp": 1}]}},
+  "ext": {"agent": {
+    "ver": "0.1",
+    "id": "agt_1",
+    "type": "shopping_agent",
+    "name": "Demo Shopping Assistant",
+    "operator_domain": "example-bot.pk",
+    "conversation": {
+      "intent": "purchase",
+      "decision_stage": "decide",
+      "summary": "User wants a laptop under PKR 150k for university, Karachi delivery",
+      "topic": {"cattax": 7, "cat": ["Computing"], "keywords": ["laptop", "core i5"]},
+      "lang": {"code": "ur", "script": "Latn", "variant": "code_mixed", "mix": ["en"], "reply_lang": "ur-Latn"},
+      "turn": {"index": 3, "session_turns": 3, "prior_topics": ["Computing"], "user_asked_for_options": true, "modality": "text"},
+      "sensitive": false
+    },
+    "consent": {"ads": true, "personalization": false, "age_gate": "adult_confirmed"},
+    "disclosure": {"label_supported": true, "label_lang": "ur-Latn", "separate_ui": true},
+    "ivt": {"checked": ["D1", "D2", "D4", "D5", "D6"], "score": 8, "reasons": [], "agent_verified": true},
+    "payout": {"statement_url": "https://msadsnetwork.com/api/v1/payout/statement/agt_1", "period": "monthly"}
+  }}
+}
