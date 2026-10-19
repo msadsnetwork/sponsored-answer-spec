@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sponsored Answer Spec v0.1 (draft) – Demo | MS Ads Network</title>
+<style>
+:root{--b9:#0b3d91;--b7:#1556c9;--b5:#2f7bf5;--b1:#e8f1ff;--b0:#f5f9ff;--t:#0f1f3d}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--b0);color:var(--t)}
+header{background:var(--b7);color:#fff;padding:18px 24px}header h1{margin:0;font-size:20px}header p{margin:4px 0 0;opacity:.9;font-size:14px}
+.wrap{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:20px;padding:20px;max-width:1200px;margin:auto}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid #cfe0ff;border-radius:12px;padding:16px}
+h2{font-size:16px;color:var(--b9);margin:0 0 10px}
+.msg{padding:10px 12px;border-radius:12px;margin:8px 0;font-size:14px;line-height:1.45;max-width:92%}
+.u{background:var(--b5);color:#fff;margin-left:auto}.a{background:var(--b1)}
+.sa{border:2px solid var(--b5);background:#fff;border-radius:12px;padding:10px 12px;margin:10px 0}
+.lbl{display:inline-block;background:var(--b9);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
+.sp{font-size:12px;color:var(--b7);margin-left:6px}.sa h3{margin:6px 0 4px;font-size:15px}.sa p{margin:0 0 8px;font-size:14px}
+.btn{background:var(--b7);color:#fff;border:0;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;text-decoration:none}
+.why{font-size:12px;color:var(--b7);margin-left:8px}
+.tabs button{background:var(--b1);border:1px solid #cfe0ff;color:var(--b9);padding:6px 10px;border-radius:8px;margin-right:6px;cursor:pointer}
+.tabs button.on{background:var(--b7);color:#fff}
+pre{background:#0f2a5c;color:#e8f1ff;border-radius:10px;padding:12px;overflow:auto;font-size:12px;max-height:520px}
+.note{font-size:12px;color:#33507d;margin-top:10px}footer{text-align:center;font-size:12px;color:#33507d;padding:16px}
+</style></head><body>
+<header><h1>MS Ads Sponsored Answer Spec v0.1 <small>(draft)</small></h1>
+<p>An OpenRTB 2.6 extension for labelled sponsored answers in chatbots and AI agents. Illustrative demo with example data only.</p></header>
+<div class="wrap">
+<section class="card"><h2>Chat (example)</h2>
+<div class="msg u">Mujhe university ke liye laptop chahiye, 150k se kam, Karachi delivery ho.</div>
+<div class="msg a">Core i5 ya Ryzen 5, 8–16 GB RAM aur SSD waala laptop is budget mein theek rahega. Neeche aik sponsored option hai.</div>
+<div class="sa" id="sa"></div>
+<p class="note">The sponsored block is separate from the assistant's own answer. The label comes first, and the sponsor name is shown. The host sends no raw chat or personal data, only a short intent summary.</p>
+</section>
+<section class="card"><h2>Request / Response / Event JSON</h2>
+<div class="tabs"><button class="on" data-k="req">Bid request</button><button data-k="resp">Bid response</button><button data-k="ev">Event (shown)</button></div>
+<pre id="code"></pre>
+<p class="note">Schemas and validator: <code>schema/*.schema.json</code>, <code>validate.py</code>. Overlaps with AdCP Sponsored Intelligence and IAB Agentic Audiences are documented in GAP_ANALYSIS.md.</p>
+</section></div>
+<footer>MS Ads Network · Draft for review · Not a live ad. Example brand "Example Store" is fictional.</footer>
+<script>
+const D={req:{"id": "ax_req0000000000000000000001", "at": 1, "tmax": 400, "cur": ["USD"], "imp": [{"id": "1", "tagid": "msads_agentdemo01", "bidfloor": 1.0, "bidfloorcur": "USD", "ext": {"sa": {"ver": "0.1", "formats": ["card", "text"], "position": "after_answer", "max_answers": 1, "max_text_chars": 280, "pricing": ["cpc", "cpa"], "lite": true}}}], "app": {"id": "bot-1", "bundle": "agent.1", "publisher": {"id": "1"}}, "device": {"connectiontype": 6, "geo": {"country": "PAK"}}, "regs": {"coppa": 0}, "source": {"tid": "ax_req0000000000000000000001", "schain": {"complete": 1, "ver": "1.0", "nodes": [{"asi": "msadsnetwork.com", "sid": "pub-1", "hp": 1}]}}, "ext": {"agent": {"ver": "0.1", "id": "agt_1", "type": "shopping_agent", "name": "Demo Shopping Assistant", "operator_domain": "example-bot.pk", "conversation": {"intent": "purchase", "decision_stage": "decide", "summary": "User wants a laptop under PKR 150k for university, Karachi delivery", "topic": {"cattax": 7, "cat": ["Computing"], "keywords": ["laptop", "core i5"]}, "lang": {"code": "ur", "script": "Latn", "variant": "code_mixed", "mix": ["en"], "reply_lang": "ur-Latn"}, "turn": {"index": 3, "session_turns": 3, "prior_topics": ["Computing"], "user_asked_for_options": true, "modality": "text"}, "sensitive": false}, "consent": {"ads": true, "personalization": false, "age_gate": "adult_confirmed"}, "disclosure": {"label_supported": true, "label_lang": "ur-Latn", "separate_ui": true}, "ivt": {"checked": ["D1", "D2", "D4", "D5", "D6"], "score": 8, "reasons": [], "agent_verified": true}, "payout": {"statement_url": "https://msadsnetwork.com/api/v1/payout/statement/agt_1", "period": "monthly"}}}},resp:{"id": "ax_req0000000000000000000001", "cur": "USD", "seatbid": [{"seat": "dsp-demo", "bid": [{"id": "b1", "impid": "1", "price": 1.4, "adomain": ["example-store.pk"], "cat": ["Computing"], "burl": "https://msadsnetwork.com/ax/billing?ref=axo_abcdefghijklmnopqrstuvwx", "ext": {"sa": {"ver": "0.1", "offer_ref": "axo_abcdefghijklmnopqrstuvwx", "format": "card", "pricing": "cpc", "disclosure": {"label": "Sponsored (ishtehar)", "sponsor": "Example Store", "placement": "before_content", "why_url": "https://msadsnetwork.com/why-this-ad"}, "answer": {"title": "Core i5 laptop, Karachi delivery", "text": "Example Store par Core i5 laptops PKR 150k se kam mein, Karachi mein 3 din mein delivery aur cash on delivery.", "lang": "ur-Latn", "cta": "Dekhein", "url": "https://example-store.pk/laptops?utm_source=msads", "price_claim": {"amount": 139000, "currency": "PKR", "valid_until": "2026-10-20T23:59:00+05:00"}}, "events": {"shown": "https://msadsnetwork.com/api/v1/agent-exchange/events", "clicked": "https://msadsnetwork.com/ax/c/axo_abcdefghijklmnopqrstuvwx/0123456789abcdef01234567", "accepted": "https://msadsnetwork.com/api/v1/agent-exchange/events"}}}}]}]},ev:{"offer_ref": "axo_abcdefghijklmnopqrstuvwx", "event": "shown", "idempotency_key": "shown:axo_abcdefghijklmnopqrstuvwx", "ts": "2026-10-19T23:50:00+05:00", "visible_ms": 4200}};
+const sa=D.resp.seatbid[0].bid[0].ext.sa;const el=document.getElementById('sa');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+el.innerHTML=`<span class="lbl">${esc(sa.disclosure.label)}</span><span class="sp">${esc(sa.disclosure.sponsor)}</span>
+<h3>${esc(sa.answer.title)}</h3><p>${esc(sa.answer.text)}</p>
+<a class="btn" href="#" onclick="return false">${esc(sa.answer.cta)}</a><a class="why" href="#" onclick="return false">Why am I seeing this?</a>`;
+const code=document.getElementById('code');const show=k=>code.textContent=JSON.stringify(D[k],null,2);show('req');
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');show(b.dataset.k)});
+</script></body></html>
