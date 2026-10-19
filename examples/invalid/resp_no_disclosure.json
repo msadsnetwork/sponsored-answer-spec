@@ -1,0 +1,48 @@
+{
+ "id": "ax_req0000000000000000000001",
+ "cur": "USD",
+ "seatbid": [
+  {
+   "seat": "dsp-demo",
+   "bid": [
+    {
+     "id": "b1",
+     "impid": "1",
+     "price": 0.42,
+     "adomain": [
+      "example-store.pk"
+     ],
+     "cat": [
+      "Computing"
+     ],
+     "burl": "https://msadsnetwork.com/ax/billing?ref=axo_abcdefghijklmnopqrstuvwx",
+     "ext": {
+      "sa": {
+       "ver": "0.1",
+       "offer_ref": "axo_abcdefghijklmnopqrstuvwx",
+       "format": "card",
+       "pricing": "cpc",
+       "answer": {
+        "title": "Core i5 laptop, Karachi delivery",
+        "text": "Example Store par Core i5 laptops PKR 150k se kam mein, Karachi mein 3 din mein delivery aur cash on delivery.",
+        "lang": "ur-Latn",
+        "cta": "Dekhein",
+        "url": "https://example-store.pk/laptops?utm_source=msads",
+        "price_claim": {
+         "amount": 139000,
+         "currency": "PKR",
+         "valid_until": "2026-10-20T23:59:00+05:00"
+        }
+       },
+       "events": {
+        "shown": "https://msadsnetwork.com/api/v1/agent-exchange/events",
+        "clicked": "https://msadsnetwork.com/ax/c/axo_abcdefghijklmnopqrstuvwx/0123456789abcdef01234567",
+        "accepted": "https://msadsnetwork.com/api/v1/agent-exchange/events"
+       }
+      }
+     }
+    }
+   ]
+  }
+ ]
+}
